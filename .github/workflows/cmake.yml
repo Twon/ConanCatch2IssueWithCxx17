@@ -104,34 +104,17 @@ jobs:
         run: |
           conan install "${{github.workspace}}" --build missing -pr:b default 
 
-      - name: Configure Conan Build
-        if: matrix.settings.os == 'windows-latest'
-        shell: cmd
-        working-directory: ${{github.workspace}}
-        run: |
-           call build\conanvcvars.bat
-           call build\conanbuild.bat
-
-      - name: Configure Conan Build
-        if: matrix.settings.os != 'windows-latest'
-        shell: bash
-        working-directory: ${{github.workspace}}
-        run: |
-           source build/conanbuild.sh
-
       - name: Configure CMake
         if: matrix.settings.os == 'windows-latest'
         shell: cmd
         run: |
           cmake --version
-          call build\conanbuild.bat
           cmake --preset conan-default
 
       - name: Configure CMake
         if: matrix.settings.os != 'windows-latest'
         shell: bash
         run: |
-          source build/conanbuild.sh
           cmake --preset conan-default 
 
       - name: Conan Preset
@@ -142,14 +125,12 @@ jobs:
         if: matrix.settings.os == 'windows-latest'
         shell: cmd
         run: |
-          call build\conanbuild.bat
           cmake --build --preset ${{ env.CONAN_PRESET }}
 
       - name: Build
         if: matrix.settings.os != 'windows-latest'
         shell: bash
         run: |
-          source build/conanbuild.sh
           cmake --build --preset ${{ env.CONAN_PRESET }}
 
       - name: Test
